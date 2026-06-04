@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-06-04 — [DEMO] Vercel: deployment "Ready/Production" pero 404 en TODAS las rutas
+
+**Síntoma**: tras desplegar la demo, tanto el dominio como la URL propia del deployment daban
+`404: NOT_FOUND` (`X-Vercel-Error: NOT_FOUND`, `cdg1::...`). El build salía verde (Ready, Production)
+y el log mostraba la tabla de rutas con `○ /`. Incluso `/_next/static/*` daba 404 a nivel plataforma.
+
+**Causa raíz**: el proyecto `crm-demo` de Vercel quedó en un **estado corrupto** (ni `vercel project ls`
+lo listaba). El build se publicaba pero el host no enrutaba al output. Descartado: framework
+(era Next.js), Root Directory (vacío), Output Directory (auto), build cache (redeploy sin caché
+no arregló), Deployment Protection (al desactivarla, 401→404).
+
+**Solución**: deployment limpio por **CLI** a un proyecto nuevo:
+`vercel deploy --prod --yes --scope mytconsultings-projects` → proyecto `myt-crn-demo`,
+URL pública verificada `https://myt-crn-demo.vercel.app` (200). Conectado a GitHub con
+`vercel git connect` para auto-deploy.
+
+**Notas**: (1) `middleware.ts` con `matcher: []` rompía antes el build con
+*"Route at index 4 must define either src or source"* → se eliminó el middleware (la demo no tiene auth).
+(2) Sentry (`withSentryConfig`) se quitó porque sin `SENTRY_AUTH_TOKEN` arriesgaba el build en CI.
+
+**Archivos**: `next.config.js`, `app/global-error.tsx`, borrado `middleware.ts` y `sentry.*`/`instrumentation*`.
+
+---
+
+## 2026-06-04 — [DEMO] Supabase Service Key expuesta en el historial de git
+
+**Síntoma**: GitHub avisó "Secrets detected" — *Supabase Service Key* en
+`supabase/migrations/...remote_schema.sql` (commit `f90494b`) del repo demo.
+
+**Causa raíz**: al crear el repo demo se subió **todo el historial del CRM real**, que incluía esa
+migración con la clave inline (la versión actual del archivo ya estaba limpia; el secreto vivía en
+un commit antiguo).
+
+**Solución**: reescribir el repo a un **único commit limpio** (`git checkout --orphan` + quitar
+`supabase/` + `git commit` + `git push --force`). El commit con el secreto deja de estar referenciado.
+⚠️ Reescribir NO basta: la clave estuvo expuesta → **hay que rotarla en Supabase** y actualizar el
+env del CRM oficial (PENDIENTE del cliente). Tras rotar, marcar la alerta de GitHub como *Revoked*.
+
+---
+
 ## 2026-06-03 — Security Advisor de Supabase: 3 errores + 11 warnings
 
 **Síntoma**: el Security Advisor mostraba 3 errores rojos (`security_definer_view`) y varios warnings amarillos (`function_search_path_mutable`, `*_security_definer_function_executable`, `public_bucket_allows_listing`).

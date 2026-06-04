@@ -4,6 +4,38 @@
 
 ---
 
+### 2026-06-04 — [DEMO] Mock de Supabase sobre localStorage en vez de reescribir páginas
+
+**Decisión**: para la build demo, reemplazar `lib/supabase/client.ts` por un **mock que imita la API
+de Supabase** (query builder encadenable + auth/storage/realtime stubs) resolviendo contra
+`localStorage` (`lib/demo/store.ts` + `lib/demo/client.ts`).
+
+**Alternativas descartadas**: (a) reescribir cada página para usar una capa de datos propia
+(mucho código, páginas grandes de 600+ líneas); (b) mantener Supabase con un proyecto de demo
+(requiere servidor, cuentas y claves — el cliente quería algo sin backend).
+
+**Razón**: el mock permite que **todas las páginas funcionen sin tocarlas** (siguen llamando a
+`createClient().from(...).select()...`). Solo hubo que soportar los patrones de query realmente
+usados y los 2 joins embebidos (`leads→team_member`, `lead_etiquetas→etiquetas`). Sin login
+(`middleware` eliminado), usuario `DEMO_USER` fijo, y botón "Reiniciar demo" que limpia el storage.
+
+---
+
+### 2026-06-04 — [DEMO] Repo y proyecto Vercel independientes del CRM oficial
+
+**Decisión**: la demo vive en su propio repo (`mytconsulting/crmDEMO`) y proyecto Vercel
+(`myt-crn-demo`, URL `myt-crn-demo.vercel.app`), **totalmente separados** del oficial
+(`myt-crm-app`). Historial de git **reiniciado** (1 commit) para no arrastrar el código/secretos
+del CRM real.
+
+**Alternativas descartadas**: rama demo dentro del repo oficial (riesgo de push a producción);
+mismo proyecto Vercel.
+
+**Razón**: requisito explícito del cliente de no tocar ni poder tocar el CRM oficial. La carpeta
+local venía enlazada al repo y Vercel oficiales (peligro), así que se desconectó `origin` y `.vercel`.
+
+---
+
 ### 2026-06-03 — No revocar EXECUTE de is_admin/is_super_admin pese al warning del Security Advisor
 
 **Decisión**: ante los warnings `*_security_definer_function_executable`, arreglar solo las funciones de trigger (`handle_new_lead`, `handle_new_user`) revocando su EXECUTE por RPC, pero **dejar `is_admin()`/`is_super_admin()` ejecutables** por anon/authenticated.
