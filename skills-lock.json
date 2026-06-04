@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "skills": {
+    "content-design": {
+      "source": "n8n-io/n8n",
+      "sourceType": "github",
+      "computedHash": "53045f16edbc545891334c3821a1a587f144546c085fafe992594183161ebc07"
+    },
+    "n8n-conventions": {
+      "source": "n8n-io/n8n",
+      "sourceType": "github",
+      "computedHash": "ec27d57fbbbcd296db5c66d285524cb86920e7d0e162d26723d0c031c076d98d"
+    },
+    "reproduce-bug": {
+      "source": "n8n-io/n8n",
+      "sourceType": "github",
+      "computedHash": "4925b149ef4b0ac5b93925f1b89b41576c9a7975b878bc045321b14bdd83b647"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "507f011a70e8b3ae242bdc0bb5b39fd91a1d4049a0f3c281991ccf84973d591c"
+    },
+    "spec-driven-development": {
+      "source": "n8n-io/n8n",
+      "sourceType": "github",
+      "computedHash": "69d9973d704fc488e76843fa2f0a5a34f27572faf7c1308e70d10ae6fd44d45c"
+    },
+    "stripe-best-practices": {
+      "source": "stripe/ai",
+      "sourceType": "github",
+      "computedHash": "c96412bd7ea966c643cbff87c05f59709a7b7b195bff6ae066a8fce7226d2ba1"
+    },
+    "upgrade-stripe": {
+      "source": "stripe/ai",
+      "sourceType": "github",
+      "computedHash": "83b0068e099b50bd71febd20373e13dc55b2b20cf6daaf36f45089e2fd7c92bb"
+    }
+  }
+}

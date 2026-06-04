@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+.next
+.env
+.env.*
+.env.local
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+supabase/.temp/
+.agent/
+.agents/
+# Claude Code internals (settings, cache, tool results)
+.claude/*
+# Pero versionar docs y sessions del proyecto
+!.claude/docs/
+!.claude/sessions/
+.vercel
+.env*.local
+
+# Sentry Config File
+.env.sentry-build-plugin
+tsconfig.tsbuildinfo
+
+.official-remote-backup.txt
+.vercel.official.bak/
