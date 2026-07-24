@@ -99,6 +99,15 @@ funcionales (mock); Setter IA solo como zona informativa; landing y config de ag
   sidebar "ANÁLISIS" y PAGE_TITLES): es una vista de **agencia/administrador** multi-cliente, y la demo
   solo debe mostrar lo que ve un **cliente (tenant)**. Regla anotada en CLAUDE.md y memoria.
 
+### Zonas informativas añadidas (Recursos y Workflows)
+- Igual que Agentes, se añadieron 2 páginas EXPLICATIVAS (sin funcionalidad, CSS scoped local, sin backend):
+  - **Recursos** (`app/(dashboard)/recursos/page.tsx`): biblioteca de materiales (imágenes/vídeos/docs/enlaces)
+    que el agente envía al lead; tipos, cómo funciona (3 pasos), ejemplos. Acento índigo.
+  - **Workflows** (`app/(dashboard)/workflows/page.tsx`): automatizaciones; mini-diagrama de flujo estático,
+    bloques (Esperar/Condición/Enviar mensaje/Follow-up IA/Actualizar/Recordatorio), disparadores y plantillas
+    reales (extraídas de `lib/workflows/templates.ts` de SF). Acento verde de marca.
+- Sidebar: Recursos en INTELIGENCIA, Workflows en nueva sección AUTOMATIZACIÓN. PAGE_TITLES añadidos.
+
 ### Pendiente (no hecho)
-- Workflows (builder React Flow, necesita dep `@xyflow/react`), Métricas Agente, Homepage marketing:
-  no portados. Integraciones/Admin/Auth/Entrenar: no viables sin backend.
+- Workflows real (builder React Flow con `@xyflow/react`) — solo se hizo la zona informativa.
+- Métricas Agente, Homepage marketing: no portados. Integraciones/Admin/Auth/Entrenar: no viables sin backend.

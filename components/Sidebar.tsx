@@ -26,6 +26,13 @@ const NAV_SECTIONS = [
     label: 'INTELIGENCIA',
     items: [
       { id: "agent", href: "/agent", icon: I.bot, label: "Agentes" },
+      { id: "recursos", href: "/recursos", icon: I.file, label: "Recursos" },
+    ],
+  },
+  {
+    label: 'AUTOMATIZACIÓN',
+    items: [
+      { id: "workflows", href: "/workflows", icon: I.flow, label: "Workflows" },
     ],
   },
   {
