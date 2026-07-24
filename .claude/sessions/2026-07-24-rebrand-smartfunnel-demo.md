@@ -78,9 +78,12 @@ funcionales (mock); Setter IA solo como zona informativa; landing y config de ag
 - Quitados: los `fetch('/api/admin/rendimiento…')`, `CapiConfigModal` + su botón, `regenFlows`, `lib/meta`.
   Las 5 pestañas del drill-down quedaron completas (incl. Meta Ads con drill campaña→conjunto→anuncio).
 
-### Setter IA (`/agent`) — zona informativa (NO funcional)
-- `app/(dashboard)/agent/page.tsx` reescrito de cero: página estática que explica qué hace el agente IA
-  (capacidades + agentes Ventas/Soporte), reutilizando clases `crm-*` y iconos. Sin backend ni config real.
+### Agentes (`/agent`) — zona informativa (NO funcional)
+- `app/(dashboard)/agent/page.tsx` reescrito de cero: página estática que explica los **dos agentes IA**
+  diferenciados por color (Setter/Ventas en verde `--tide`, Soporte/Atención en azul `--info`), con franja
+  de "recorrido del cliente" mostrando el relevo tras la venta, tarjetas con capacidades y entrada
+  escalonada. CSS scoped en un `<style>` local (prefijo `agp-`), sin tocar globals. Renombrado de
+  "Setter IA" → **Agentes** en Sidebar y PAGE_TITLES. Sin backend.
 
 ### Cableado compartido
 - `components/Sidebar.tsx`: +Chat (OPERACIONES), +Setter IA (INTELIGENCIA), +Rendimiento (ANÁLISIS).

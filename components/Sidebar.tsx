@@ -25,7 +25,7 @@ const NAV_SECTIONS = [
   {
     label: 'INTELIGENCIA',
     items: [
-      { id: "agent", href: "/agent", icon: I.bot, label: "Setter IA" },
+      { id: "agent", href: "/agent", icon: I.bot, label: "Agentes" },
     ],
   },
   {
