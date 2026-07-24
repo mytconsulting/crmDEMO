@@ -18,8 +18,7 @@ import { Icon, I } from '@/components/crm-icons'
 // URL del webhook de captura de leads del SmartFunnel real (producción).
 const SMARTFUNNEL_LEAD_WEBHOOK = 'https://www.smartfunnel.es/api/webhooks/lead'
 // UUID del tenant de M&T en SmartFunnel (dónde deben caer los leads de la demo).
-// PENDIENTE: pegar el tenant_id (UUID). Mientras esté vacío, el form solo guarda copia local.
-const SMARTFUNNEL_TENANT_ID = ''
+const SMARTFUNNEL_TENANT_ID = 'a308bc5d-8cd6-4096-bacb-6aa184be9678'
 
 // Datos de contacto que se muestran en el popup.
 const CONTACT_EMAIL = 'contacto@mytconsulting.es'
