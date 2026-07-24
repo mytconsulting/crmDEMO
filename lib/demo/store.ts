@@ -8,7 +8,7 @@
  * Un único registro JSON en localStorage contiene todas las "tablas".
  */
 
-export const DEMO_STORAGE_KEY = 'mtcrm_demo_v1'
+export const DEMO_STORAGE_KEY = 'mtcrm_demo_v2'
 
 export const DEMO_USER = { id: 'demo-tenant-0001', email: 'demo@mytcrm.app' }
 
@@ -22,6 +22,7 @@ export interface DemoDB {
   configuracion_modulos: Record<string, unknown>[]
   avatar_cliente: Record<string, unknown>[]
   citas: Record<string, unknown>[]
+  interacciones: Record<string, unknown>[]
   google_calendar_connections: Record<string, unknown>[]
 }
 
@@ -123,6 +124,41 @@ function seed(): DemoDB {
     },
   ]
 
+  // Conversaciones (Chat): hilos entrantes + respuestas del Setter IA por lead.
+  const interacciones = [
+    // L(4) Diego Romero — WhatsApp, caliente (creado d6, último d2)
+    { id: uid(), lead_id: L(4), tipo: 'whatsapp_recibido',   detalle: 'Hola, vi vuestro anuncio sobre automatizar la captación de clientes. ¿Cómo funciona?', metadata: {}, puntos_score: 0, created_at: daysAgo(6, 10, 2) },
+    { id: uid(), lead_id: L(4), tipo: 'whatsapp_respondido', detalle: '¡Hola Diego! Gracias por escribir. Ayudamos a despachos como el tuyo a captar y hacer seguimiento a leads de forma automática con un CRM + un asistente de IA. ¿Ahora mismo cómo gestionáis los contactos que llegan?', metadata: {}, puntos_score: 0, created_at: daysAgo(6, 10, 3) },
+    { id: uid(), lead_id: L(4), tipo: 'whatsapp_recibido',   detalle: 'Pues la verdad es que a mano, en una hoja de Excel. Se nos escapan clientes.', metadata: {}, puntos_score: 5, created_at: daysAgo(6, 10, 8) },
+    { id: uid(), lead_id: L(4), tipo: 'whatsapp_respondido', detalle: 'Es lo más habitual. Con nuestro sistema cada lead entra solo, se le puntúa y el asistente responde al momento 24/7. ¿Te vendría bien una demo rápida esta semana para verlo con tus datos?', metadata: {}, puntos_score: 0, created_at: daysAgo(6, 10, 9) },
+    { id: uid(), lead_id: L(4), tipo: 'whatsapp_recibido',   detalle: 'Sí, me interesa. ¿El jueves por la tarde?', metadata: {}, puntos_score: 10, created_at: daysAgo(2, 16, 0) },
+    { id: uid(), lead_id: L(4), tipo: 'whatsapp_respondido', detalle: 'Perfecto, te reservo el jueves. Te llega la confirmación por aquí. ¡Hablamos!', metadata: {}, puntos_score: 0, created_at: daysAgo(2, 16, 1) },
+
+    // L(2) Javier Moreno — Instagram, nuevo (creado d2)
+    { id: uid(), lead_id: L(2), tipo: 'instagram_recibido',   detalle: 'Buenas! Os encontré por Instagram. Tengo un taller y quiero conseguir más clientes. ¿Qué ofrecéis?', metadata: {}, puntos_score: 0, created_at: daysAgo(2, 18, 31) },
+    { id: uid(), lead_id: L(2), tipo: 'instagram_respondido', detalle: '¡Hola Javier! Montamos un sistema que capta a los interesados de tus anuncios y les responde al instante para agendarte visitas. ¿Trabajas más chapa y pintura o mecánica general?', metadata: {}, puntos_score: 5, created_at: daysAgo(2, 18, 33) },
+    { id: uid(), lead_id: L(2), tipo: 'instagram_recibido',   detalle: 'Sobre todo mecánica general. ¿Cuánto costaría?', metadata: {}, puntos_score: 8, created_at: daysAgo(2, 18, 40) },
+    { id: uid(), lead_id: L(2), tipo: 'instagram_respondido', detalle: 'Depende del volumen, pero hay planes desde muy asequible. Te paso los detalles en una llamada de 15 min sin compromiso. ¿Te va bien mañana?', metadata: {}, puntos_score: 0, created_at: daysAgo(2, 18, 41) },
+
+    // L(3) Lucía Fernández — contactado (creado d4, último d3)
+    { id: uid(), lead_id: L(3), tipo: 'whatsapp_recibido',   detalle: 'Hola, me ha recomendado una amiga que también es clienta vuestra. Quería info del plan anual.', metadata: {}, puntos_score: 0, created_at: daysAgo(4, 11, 1) },
+    { id: uid(), lead_id: L(3), tipo: 'whatsapp_respondido', detalle: '¡Hola Lucía! Qué bien que vengas recomendada. El plan anual incluye el CRM completo y el agente IA con ahorro frente al mensual. ¿Para qué tipo de clínica lo quieres?', metadata: {}, puntos_score: 5, created_at: daysAgo(4, 11, 3) },
+    { id: uid(), lead_id: L(3), tipo: 'whatsapp_recibido',   detalle: 'Una clínica dental. Recibimos muchas consultas por WhatsApp y no damos abasto.', metadata: {}, puntos_score: 8, created_at: daysAgo(3, 12, 0) },
+    { id: uid(), lead_id: L(3), tipo: 'whatsapp_respondido', detalle: 'Justo para eso es ideal: el agente responde y agenda las citas solo. Te preparo una propuesta y te la mando. ¿Te parece?', metadata: {}, puntos_score: 0, created_at: daysAgo(3, 12, 1) },
+
+    // L(5) Ana Torres — caliente (creado d8, último d1)
+    { id: uid(), lead_id: L(5), tipo: 'whatsapp_recibido',   detalle: 'Hola, os conocí en la feria del deporte. Quiero captar socios nuevos para el gimnasio.', metadata: {}, puntos_score: 0, created_at: daysAgo(8, 13, 1) },
+    { id: uid(), lead_id: L(5), tipo: 'whatsapp_respondido', detalle: '¡Hola Ana! Encantados de saludarte de nuevo. Podemos automatizar la captación de socios desde tus campañas y que el agente cierre las visitas al gimnasio. ¿Cuántas altas al mes te gustaría conseguir?', metadata: {}, puntos_score: 5, created_at: daysAgo(8, 13, 3) },
+    { id: uid(), lead_id: L(5), tipo: 'whatsapp_recibido',   detalle: 'Me encantaría llegar a 30-40 al mes. Ahora vamos por la mitad.', metadata: {}, puntos_score: 12, created_at: daysAgo(1, 10, 0) },
+    { id: uid(), lead_id: L(5), tipo: 'whatsapp_respondido', detalle: 'Es un objetivo muy alcanzable con el sistema bien montado. Te propongo una demo para enseñarte cómo lo haríamos. ¿Esta semana?', metadata: {}, puntos_score: 0, created_at: daysAgo(1, 10, 1) },
+
+    // L(6) Pablo Gil — negociación (creado d12, último d1)
+    { id: uid(), lead_id: L(6), tipo: 'whatsapp_recibido',   detalle: 'Buenas, estoy comparando vuestra solución con otra. La otra es algo más barata.', metadata: {}, puntos_score: 0, created_at: daysAgo(12, 9, 1) },
+    { id: uid(), lead_id: L(6), tipo: 'whatsapp_respondido', detalle: 'Entiendo, Pablo. La diferencia está en el soporte y en que el agente IA está afinado para tu sector inmobiliario. Eso se traduce en más visitas cerradas. ¿Qué es lo que más te preocupa, el precio o el resultado?', metadata: {}, puntos_score: 5, created_at: daysAgo(12, 9, 4) },
+    { id: uid(), lead_id: L(6), tipo: 'whatsapp_recibido',   detalle: 'El resultado, sobre todo. Si funciona, el precio es lo de menos.', metadata: {}, puntos_score: 10, created_at: daysAgo(1, 18, 0) },
+    { id: uid(), lead_id: L(6), tipo: 'follow_up_automatico', detalle: 'Te dejo un caso de un cliente del sector que pasó de 8 a 21 visitas al mes en el primer trimestre. Cuando quieras lo vemos en detalle.', metadata: {}, puntos_score: 0, created_at: daysAgo(1, 18, 1) },
+  ]
+
   return {
     leads,
     team_members,
@@ -133,6 +169,7 @@ function seed(): DemoDB {
     configuracion_modulos,
     avatar_cliente,
     citas,
+    interacciones,
     google_calendar_connections: [],
   }
 }
@@ -161,7 +198,7 @@ export function getDB(): DemoDB {
 function emptyDB(): DemoDB {
   return {
     leads: [], team_members: [], pipeline_estados: [], etiquetas: [], lead_etiquetas: [],
-    profiles: [], configuracion_modulos: [], avatar_cliente: [], citas: [], google_calendar_connections: [],
+    profiles: [], configuracion_modulos: [], avatar_cliente: [], citas: [], interacciones: [], google_calendar_connections: [],
   }
 }
 

@@ -11,14 +11,27 @@ interface SidebarProps {
   onClose: () => void
 }
 
-// DEMO: solo los módulos que funcionan sin servidor/IA.
+// DEMO: solo los módulos que funcionan sin servidor/IA (o zonas informativas).
 const NAV_SECTIONS = [
   {
     label: 'OPERACIONES',
     items: [
       { id: "dashboard", href: "/", icon: I.dashboard, label: "Dashboard" },
       { id: "pipeline", href: "/pipeline", icon: I.pipeline, label: "Pipeline" },
+      { id: "chat", href: "/chat", icon: I.chat, label: "Chat" },
       { id: "calendario", href: "/calendar", icon: I.cal, label: "Calendario" },
+    ],
+  },
+  {
+    label: 'INTELIGENCIA',
+    items: [
+      { id: "agent", href: "/agent", icon: I.bot, label: "Setter IA" },
+    ],
+  },
+  {
+    label: 'ANÁLISIS',
+    items: [
+      { id: "rendimiento", href: "/rendimiento", icon: I.chart, label: "Rendimiento" },
     ],
   },
   {

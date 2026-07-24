@@ -54,3 +54,43 @@ de UI del CRM oficial, a partir de una copia de solo lectura en
 `app/layout.tsx`, `app/globals.css`, `app/(dashboard)/{layout,page,pipeline/page,empresa/page}.tsx`,
 `components/{Sidebar,crm-icons,DateRangeCalendar,LeadCard,LeadDetail,KanbanColumn,NewLeadModal}.tsx`,
 `src/CalendarioCitas.tsx`, `lib/types.ts`, `public/manifest.json` + assets `public/**`.
+
+---
+
+# Parte 2 · Bloque C — módulos nuevos mockeados
+
+Tras el rebrand, se añadieron 3 módulos que la demo no tenía, sin backend (mock localStorage /
+datos estáticos). Portados desde la copia de SmartFunnel. Decisión del cliente: Chat y Rendimiento
+funcionales (mock); Setter IA solo como zona informativa; landing y config de agente descartados.
+
+### Chat (`/chat`) — bandeja funcional mock
+- `app/(dashboard)/chat/page.tsx` (sin `TierGate`) + `src/ChatView.jsx` (copiado de SF, **eliminados**
+  el useEffect de realtime `channel/subscribe` y el polling `setInterval`; el mock igualmente los stubbea).
+- Nueva tabla `interacciones` en `lib/demo/store.ts` (interface + emptyDB + seed): ~24 mensajes en 5 hilos
+  (WhatsApp + Instagram) para leads L(2)…L(6). Tipos: `whatsapp_recibido/respondido`, `instagram_*`,
+  `follow_up_automatico`. La lista lateral solo muestra leads con ≥1 interacción.
+
+### Rendimiento (`/rendimiento` + `/[tenant]`) — cockpit de agencia mock
+- Copiados de SF: `page.tsx` (cockpit), `[tenant]/page.tsx` (drill-down), `period.tsx`, y los 2 CSS
+  modules (`rendimiento.module.css`, `[tenant]/detalle.module.css` — todos los tokens existen en globals).
+- **Nuevo** `app/(dashboard)/rendimiento/mock.ts`: tipos + `buildCockpit()/buildDetail(id)/buildAds(...)`.
+  5 clientes ficticios (t1–t5) con KPIs coherentes y estados CAPI variados (ok/warn/off/unset).
+- Quitados: los `fetch('/api/admin/rendimiento…')`, `CapiConfigModal` + su botón, `regenFlows`, `lib/meta`.
+  Las 5 pestañas del drill-down quedaron completas (incl. Meta Ads con drill campaña→conjunto→anuncio).
+
+### Setter IA (`/agent`) — zona informativa (NO funcional)
+- `app/(dashboard)/agent/page.tsx` reescrito de cero: página estática que explica qué hace el agente IA
+  (capacidades + agentes Ventas/Soporte), reutilizando clases `crm-*` y iconos. Sin backend ni config real.
+
+### Cableado compartido
+- `components/Sidebar.tsx`: +Chat (OPERACIONES), +Setter IA (INTELIGENCIA), +Rendimiento (ANÁLISIS).
+- `app/(dashboard)/layout.tsx`: `PAGE_TITLES` para `/agent` (informativo) y `/rendimiento`.
+- `lib/demo/store.ts`: **`DEMO_STORAGE_KEY` subido `v1`→`v2`** para forzar re-seed (si no, visitantes con
+  localStorage viejo no verían Chat).
+
+### Verificación parte 2
+- `npm run build` ✅ 10 rutas (incl. `/agent`, `/chat`, `/rendimiento`, `/rendimiento/[tenant]`).
+
+### Pendiente (no hecho)
+- Workflows (builder React Flow, necesita dep `@xyflow/react`), Métricas Agente, Homepage marketing:
+  no portados. Integraciones/Admin/Auth/Entrenar: no viables sin backend.

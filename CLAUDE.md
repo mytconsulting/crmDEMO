@@ -5,8 +5,10 @@
 >   del navegador. El cliente Supabase del navegador está reemplazado por un mock
 >   (`lib/demo/client.ts` + `lib/demo/store.ts`); `lib/supabase/client.ts` solo reexporta el mock.
 > - **Sin login**: el `middleware.ts` es no-op; se entra directo. Usuario fijo `DEMO_USER`.
-> - **Módulos activos**: Dashboard, Pipeline/Kanban, Calendario, Empresa (empresa/equipo/avatar).
->   El resto (Setter IA, Chat, Integraciones, Admin, Campañas, Módulos, webhooks, cron) se ha **eliminado**.
+> - **Módulos activos**: Dashboard, Pipeline/Kanban, Calendario, Empresa (empresa/equipo/avatar),
+>   **Chat** (bandeja mock con `interacciones` sembradas), **Rendimiento** (cockpit de agencia mock,
+>   `app/(dashboard)/rendimiento/mock.ts`) y **Setter IA** (`/agent`, solo zona informativa, sin backend).
+>   El resto (Integraciones, Admin, Campañas, Módulos, Workflows, webhooks, cron) se ha **eliminado**.
 > - **Botón "Reiniciar demo"** (esquina inferior izquierda, `components/DemoResetButton.tsx`):
 >   borra el localStorage y vuelve a sembrar los datos de ejemplo (`resetDemo()` en `lib/demo/store.ts`).
 > - Este repo/proyecto Vercel debe ser **independiente** del CRM oficial (`mytconsulting/myt-crm-app`).

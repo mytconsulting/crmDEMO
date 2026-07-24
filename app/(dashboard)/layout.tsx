@@ -21,7 +21,8 @@ interface Profile {
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   '/': { title: 'Panel general', subtitle: 'Operaciones' },
   '/pipeline': { title: 'Pipeline de ventas', subtitle: 'SmartFunnel · Gestión de leads' },
-  '/agent': { title: 'Setter IA', subtitle: 'Inteligencia · Configuración' },
+  '/agent': { title: 'Setter IA', subtitle: 'Inteligencia · Qué es el agente' },
+  '/rendimiento': { title: 'Rendimiento', subtitle: 'Análisis · Clientes de la agencia' },
   '/agent/train': { title: 'Entrenamiento del agente', subtitle: 'Inteligencia · Base de conocimiento' },
   '/calendar': { title: 'Calendario de citas', subtitle: 'Setter IA · Agenda automática' },
   '/chat': { title: 'Chat', subtitle: 'Conversaciones unificadas' },
