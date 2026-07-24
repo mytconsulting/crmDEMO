@@ -26,6 +26,7 @@ const NAV_SECTIONS = [
     label: 'INTELIGENCIA',
     items: [
       { id: "agent", href: "/agent", icon: I.bot, label: "Agentes" },
+      { id: "soporte", href: "/soporte", icon: I.help, label: "Soporte" },
       { id: "recursos", href: "/recursos", icon: I.file, label: "Recursos" },
     ],
   },

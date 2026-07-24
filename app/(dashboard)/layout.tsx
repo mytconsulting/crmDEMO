@@ -22,6 +22,7 @@ const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   '/': { title: 'Panel general', subtitle: 'Operaciones' },
   '/pipeline': { title: 'Pipeline de ventas', subtitle: 'SmartFunnel · Gestión de leads' },
   '/agent': { title: 'Agentes', subtitle: 'Inteligencia · Tus agentes de IA' },
+  '/soporte': { title: 'Soporte', subtitle: 'Inteligencia · Agente de soporte y tickets' },
   '/recursos': { title: 'Recursos', subtitle: 'Inteligencia · Materiales para el agente' },
   '/workflows': { title: 'Workflows', subtitle: 'Automatización · Flujos' },
   '/agent/train': { title: 'Entrenamiento del agente', subtitle: 'Inteligencia · Base de conocimiento' },

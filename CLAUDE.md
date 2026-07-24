@@ -8,9 +8,9 @@
 > - **Módulos activos**: Dashboard, Pipeline/Kanban, Calendario, Empresa (empresa/equipo/avatar) y
 >   **Chat** (bandeja mock con `interacciones` sembradas). Además, **zonas informativas** (páginas
 >   explicativas sin funcionalidad, estilo landing interno): **Agentes** (`/agent`, los 2 agentes IA
->   Setter/Soporte), **Recursos** (`/recursos`, biblioteca de materiales del agente) y **Workflows**
->   (`/workflows`, automatizaciones). El resto (Integraciones, Admin, Campañas, Módulos, webhooks, cron)
->   se ha **eliminado**.
+>   Setter/Soporte), **Soporte** (`/soporte`, ciclo de vida del ticket y pausa/reactivación del agente),
+>   **Recursos** (`/recursos`, biblioteca de materiales del agente) y **Workflows** (`/workflows`,
+>   automatizaciones). El resto (Integraciones, Admin, Campañas, Módulos, webhooks, cron) se ha **eliminado**.
 > - **Solo vista de CLIENTE (tenant)**: la demo NO incluye pantallas de administrador/agencia. Por eso se
 >   quitó **Rendimiento** (cockpit multi-cliente): un cliente no lo vería.
 > - **Botón "Reiniciar demo"** (esquina inferior izquierda, `components/DemoResetButton.tsx`):

@@ -107,6 +107,12 @@ funcionales (mock); Setter IA solo como zona informativa; landing y config de ag
     bloques (Esperar/Condición/Enviar mensaje/Follow-up IA/Actualizar/Recordatorio), disparadores y plantillas
     reales (extraídas de `lib/workflows/templates.ts` de SF). Acento verde de marca.
 - Sidebar: Recursos en INTELIGENCIA, Workflows en nueva sección AUTOMATIZACIÓN. PAGE_TITLES añadidos.
+- **Soporte** (`app/(dashboard)/soporte/page.tsx`): página explicativa del agente de soporte y su sistema
+  de tickets. Ciclo de vida en timeline (atiende → crea ticket sin pausarse → te llega → intervienes tú =
+  se pausa → resuelves = se reactiva) con chips de estado Activo/Pausado, 3 reglas clave y leyenda de
+  estados. Acento azul (coherente con el agente de Soporte). Mecánica fiel a `chatbot_activo` (handoff).
+  Regla clave reflejada: el agente SOLO se pausa si lo paras a mano o escribes al cliente por WhatsApp;
+  crear un ticket NO lo pausa (guarda la duda y sigue atendiendo).
 
 ### Pendiente (no hecho)
 - Workflows real (builder React Flow con `@xyflow/react`) — solo se hizo la zona informativa.
