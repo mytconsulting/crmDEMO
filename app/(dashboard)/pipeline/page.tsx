@@ -10,13 +10,20 @@ import KanbanColumn from '@/components/KanbanColumn'
 import LeadDetail from '@/components/LeadDetail'
 import NewLeadModal from '@/components/NewLeadModal'
 import ScoreBadge from '@/components/ScoreBadge'
+import { ColumnIcon, COLUMN_ICON_KEYS } from '@/components/crm-icons'
 import { useNotificationsContext } from '@/lib/notifications-context'
 import { usePipelineColumns } from '@/lib/hooks/usePipelineColumns'
 import { useTeamMembers } from '@/lib/hooks/useTeamMembers'
 import { getScoreForColumn } from '@/lib/pipeline-scoring'
 
 const COLUMN_COLORS = ['var(--tide)', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#f97316', '#ef4444', '#ec4899']
-const COLUMN_ICONS = ['📋', '📞', '🔥', '🤝', '📅', '💎', '❌', '✨', '🎯', '💬', '📧', '🏆']
+const COLUMN_ICONS = COLUMN_ICON_KEYS
+
+// Etiquetas legibles de los canales de origen del lead (para el filtro del pipeline).
+const CANAL_LABEL: Record<string, string> = {
+  whatsapp: 'WhatsApp', instagram: 'Instagram', landing: 'Landing', cold_call: 'Llamada fría',
+  linkedin: 'LinkedIn', referido: 'Referido', evento: 'Evento', telefono: 'Teléfono', otro: 'Otro',
+}
 
 export default function PipelinePage() {
   const searchParams = useSearchParams()
@@ -30,6 +37,7 @@ export default function PipelinePage() {
   const [pipelineView, setPipelineView] = useState<"kanban" | "list">("kanban")
   const [searchTerm, setSearchTerm] = useState("")
   const [filterMember, setFilterMember] = useState<string>("")
+  const [filterCanal, setFilterCanal] = useState<string>("")
   const [listSortBy, setListSortBy] = useState("fecha_desc")
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null)
   const [userId, setUserId] = useState<string>("")
@@ -39,7 +47,7 @@ export default function PipelinePage() {
   const [showAddColumn, setShowAddColumn] = useState(false)
   const [newColLabel, setNewColLabel] = useState('')
   const [newColColor, setNewColColor] = useState(COLUMN_COLORS[0])
-  const [newColIcon, setNewColIcon] = useState('📋')
+  const [newColIcon, setNewColIcon] = useState('clipboard')
   const kanbanRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -222,8 +230,18 @@ export default function PipelinePage() {
     if (filterMember) {
       result = result.filter(l => l.asignado_a === filterMember)
     }
+    if (filterCanal) {
+      result = result.filter(l => (l.canal || "") === filterCanal)
+    }
     return result
-  }, [leads, searchTerm, filterMember])
+  }, [leads, searchTerm, filterMember, filterCanal])
+
+  // Canales presentes en los leads (para el filtro "ver solo Instagram", etc.).
+  const canalesDisponibles = useMemo(() => {
+    const set = new Set<string>()
+    for (const l of leads) if (l.canal) set.add(l.canal)
+    return Array.from(set).sort()
+  }, [leads])
 
   const sortedListLeads = useMemo(() => {
     const sorted = [...filteredLeads]
@@ -272,6 +290,19 @@ export default function PipelinePage() {
           <option value="">Todos</option>
           {teamMembers.map(m => (
             <option key={m.id} value={m.id}>{m.nombre}</option>
+          ))}
+        </select>
+      )}
+      {canalesDisponibles.length > 1 && (
+        <select
+          value={filterCanal}
+          onChange={(e) => setFilterCanal(e.target.value)}
+          className="crm-field__input"
+          style={{ padding: '6px 10px', fontSize: 12, width: 'auto', minWidth: 100 }}
+        >
+          <option value="">Todos los canales</option>
+          {canalesDisponibles.map(c => (
+            <option key={c} value={c}>{CANAL_LABEL[c] ?? c}</option>
           ))}
         </select>
       )}
@@ -356,7 +387,7 @@ export default function PipelinePage() {
                           padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700,
                           background: col.bg, color: col.color
                         }}>
-                          {col.icon} {col.label}
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><ColumnIcon icon={col.icon} size={12} /> {col.label}</span>
                         </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -513,10 +544,12 @@ export default function PipelinePage() {
                 <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
                   {COLUMN_ICONS.map(ic => (
                     <button key={ic} onClick={() => setNewColIcon(ic)} style={{
-                      width: 28, height: 28, borderRadius: 6, fontSize: 14, cursor: 'pointer', padding: 0,
+                      width: 28, height: 28, borderRadius: 6, cursor: 'pointer', padding: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: newColIcon === ic ? 'var(--tide)' : 'var(--slate)',
                       border: newColIcon === ic ? '2px solid var(--tide)' : '1px solid var(--border)',
                       background: newColIcon === ic ? '#eef2ff' : '#fff',
-                    }}>{ic}</button>
+                    }}><ColumnIcon icon={ic} size={15} /></button>
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>

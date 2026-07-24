@@ -37,5 +37,6 @@ export interface Lead {
   motivo_perdida?: string
   ultimo_contacto?: string
   asignado_a?: string
+  agente_modo?: 'ventas' | 'soporte' | null
   team_member?: TeamMember
 }

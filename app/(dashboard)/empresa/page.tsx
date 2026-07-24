@@ -3,8 +3,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useTeamMembers } from '@/lib/hooks/useTeamMembers'
+import { Icon, I } from '@/components/crm-icons'
 import type { TeamMember } from '@/types/team-member'
 import type { AvatarCliente } from '@/types/avatar-cliente'
+
+const ICONS = I as Record<string, React.ReactNode>
 
 type Tab = 'empresa' | 'equipo' | 'avatar'
 
@@ -29,7 +32,7 @@ function TabButton({ label, icon, active, onClick, badge }: {
         display: 'flex', alignItems: 'center', gap: 6,
       }}
     >
-      <span style={{ fontSize: 15 }}>{icon}</span>
+      <span style={{ display: 'flex' }}><Icon d={ICONS[icon]} size={15} /></span>
       {label}
       {badge !== undefined && (
         <span className={`crm-badge--nodot crm-badge${badge > 0 ? ' crm-badge--ok' : ''}`}
@@ -97,7 +100,7 @@ function EmpresaTab() {
         {/* Nombre empresa card */}
         <div style={{ padding: '16px 20px', background: '#fff', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: '#f0f9ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🏢</div>
+            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: '#f0f9ff', color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon d={I.building} size={18} /></div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>Nombre de la empresa</div>
               <div style={{ fontSize: 11, color: 'var(--slate-2)' }}>Nombre legal o registrado</div>
@@ -109,7 +112,7 @@ function EmpresaTab() {
         {/* Nombre comercial card */}
         <div style={{ padding: '16px 20px', background: '#fff', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>💬</div>
+            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: '#f5f3ff', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon d={I.chat} size={18} /></div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>Nombre comercial</div>
               <div style={{ fontSize: 11, color: 'var(--slate-2)' }}>El nombre que usa el agente IA al presentarse</div>
@@ -121,7 +124,7 @@ function EmpresaTab() {
         {/* Email card */}
         <div style={{ padding: '16px 20px', background: '#fff', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>✉️</div>
+            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: '#ecfdf5', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon d={I.mail} size={18} /></div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>Email de la cuenta</div>
               <div style={{ fontSize: 11, color: 'var(--slate-2)' }}>No se puede cambiar desde aqui</div>
@@ -183,7 +186,7 @@ function EquipoTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
         {members.length === 0 && !showForm && (
           <div style={{ padding: 40, textAlign: 'center', borderRadius: 'var(--r-md)', border: '2px dashed var(--mist)', color: 'var(--slate-2)' }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>👥</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8, color: 'var(--slate-2)' }}><Icon d={I.team} size={30} /></div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>Sin miembros</div>
             <div style={{ fontSize: 12, marginTop: 4 }}>Anade a tu equipo para asignarles leads y citas</div>
           </div>
@@ -252,26 +255,26 @@ function EquipoTab() {
 type AvatarField = { key: string; label: string; icon: string; color: string; bg: string; placeholder: string; type: 'input' | 'textarea' }
 
 const SHARED_FIELDS: AvatarField[] = [
-  { key: 'sector', label: 'Sector / Industria', icon: '🏭', color: '#0ea5e9', bg: '#f0f9ff', placeholder: 'Ej: Hosteleria, SaaS, Salud...', type: 'input' },
-  { key: 'presupuesto', label: 'Rango de presupuesto', icon: '💰', color: '#10b981', bg: '#ecfdf5', placeholder: 'Ej: 500-2000€/mes', type: 'input' },
-  { key: 'canales_preferidos', label: 'Canales donde esta', icon: '📱', color: '#ec4899', bg: '#fdf2f8', placeholder: 'Ej: LinkedIn, Instagram, Google, eventos', type: 'input' },
-  { key: 'problemas', label: 'Problemas que tiene', icon: '🔥', color: '#ef4444', bg: '#fef2f2', placeholder: 'Que problemas resuelve tu servicio para este cliente?', type: 'textarea' },
-  { key: 'motivaciones', label: 'Motivaciones de compra', icon: '🎯', color: 'var(--tide)', bg: 'var(--tide-soft)', placeholder: 'Por que compraria? Que le mueve a buscar solucion?', type: 'textarea' },
-  { key: 'objeciones_tipicas', label: 'Objeciones tipicas', icon: '🛡️', color: '#f97316', bg: '#fff7ed', placeholder: 'Que excusas o dudas suele poner antes de comprar?', type: 'textarea' },
-  { key: 'notas', label: 'Notas adicionales', icon: '📝', color: 'var(--slate)', bg: 'var(--paper)', placeholder: 'Cualquier dato extra relevante...', type: 'textarea' },
+  { key: 'sector', label: 'Sector / Industria', icon: 'factory', color: '#0ea5e9', bg: '#f0f9ff', placeholder: 'Ej: Hosteleria, SaaS, Salud...', type: 'input' },
+  { key: 'presupuesto', label: 'Rango de presupuesto', icon: 'money', color: '#10b981', bg: '#ecfdf5', placeholder: 'Ej: 500-2000€/mes', type: 'input' },
+  { key: 'canales_preferidos', label: 'Canales donde esta', icon: 'smartphone', color: '#ec4899', bg: '#fdf2f8', placeholder: 'Ej: LinkedIn, Instagram, Google, eventos', type: 'input' },
+  { key: 'problemas', label: 'Problemas que tiene', icon: 'fire', color: '#ef4444', bg: '#fef2f2', placeholder: 'Que problemas resuelve tu servicio para este cliente?', type: 'textarea' },
+  { key: 'motivaciones', label: 'Motivaciones de compra', icon: 'target', color: 'var(--tide)', bg: 'var(--tide-soft)', placeholder: 'Por que compraria? Que le mueve a buscar solucion?', type: 'textarea' },
+  { key: 'objeciones_tipicas', label: 'Objeciones tipicas', icon: 'shield', color: '#f97316', bg: '#fff7ed', placeholder: 'Que excusas o dudas suele poner antes de comprar?', type: 'textarea' },
+  { key: 'notas', label: 'Notas adicionales', icon: 'edit', color: 'var(--slate)', bg: 'var(--paper)', placeholder: 'Cualquier dato extra relevante...', type: 'textarea' },
 ]
 
 const B2B_FIELDS: AvatarField[] = [
-  { key: 'tamano_empresa', label: 'Tamano de empresa', icon: '📊', color: '#8b5cf6', bg: '#f5f3ff', placeholder: 'Ej: 5-20 empleados, facturacion 500K-2M', type: 'input' },
-  { key: 'cargo_decisor', label: 'Cargo del decisor', icon: '👤', color: '#f59e0b', bg: '#fffbeb', placeholder: 'Ej: CEO, Director comercial, Gerente', type: 'input' },
+  { key: 'tamano_empresa', label: 'Tamano de empresa', icon: 'chart', color: '#8b5cf6', bg: '#f5f3ff', placeholder: 'Ej: 5-20 empleados, facturacion 500K-2M', type: 'input' },
+  { key: 'cargo_decisor', label: 'Cargo del decisor', icon: 'user', color: '#f59e0b', bg: '#fffbeb', placeholder: 'Ej: CEO, Director comercial, Gerente', type: 'input' },
 ]
 
 const B2C_FIELDS: AvatarField[] = [
-  { key: 'rango_edad', label: 'Rango de edad', icon: '🎂', color: '#8b5cf6', bg: '#f5f3ff', placeholder: 'Ej: 25-45 anos', type: 'input' },
-  { key: 'genero', label: 'Genero', icon: '👤', color: '#f59e0b', bg: '#fffbeb', placeholder: 'Ej: Todos, Mujeres, Hombres', type: 'input' },
-  { key: 'ubicacion', label: 'Ubicacion', icon: '📍', color: '#0ea5e9', bg: '#f0f9ff', placeholder: 'Ej: Bilbao y alrededores, toda Espana', type: 'input' },
-  { key: 'estilo_vida', label: 'Estilo de vida', icon: '🏃', color: '#10b981', bg: '#ecfdf5', placeholder: 'Ej: Activo, familia, profesional urbano...', type: 'input' },
-  { key: 'frustraciones', label: 'Frustraciones', icon: '😤', color: '#ef4444', bg: '#fef2f2', placeholder: 'Que le frustra de las soluciones actuales?', type: 'textarea' },
+  { key: 'rango_edad', label: 'Rango de edad', icon: 'cake', color: '#8b5cf6', bg: '#f5f3ff', placeholder: 'Ej: 25-45 anos', type: 'input' },
+  { key: 'genero', label: 'Genero', icon: 'user', color: '#f59e0b', bg: '#fffbeb', placeholder: 'Ej: Todos, Mujeres, Hombres', type: 'input' },
+  { key: 'ubicacion', label: 'Ubicacion', icon: 'pin', color: '#0ea5e9', bg: '#f0f9ff', placeholder: 'Ej: Bilbao y alrededores, toda Espana', type: 'input' },
+  { key: 'estilo_vida', label: 'Estilo de vida', icon: 'activity', color: '#10b981', bg: '#ecfdf5', placeholder: 'Ej: Activo, familia, profesional urbano...', type: 'input' },
+  { key: 'frustraciones', label: 'Frustraciones', icon: 'frown', color: '#ef4444', bg: '#fef2f2', placeholder: 'Que le frustra de las soluciones actuales?', type: 'textarea' },
 ]
 
 function getFieldsForType(tipo: string): AvatarField[] {
@@ -348,7 +351,7 @@ function AvatarTab() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
         {avatars.length === 0 && !showForm && (
           <div style={{ padding: 40, textAlign: 'center', borderRadius: 'var(--r-md)', border: '2px dashed var(--mist)', color: 'var(--slate-2)' }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>🎯</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8, color: 'var(--slate-2)' }}><Icon d={I.target} size={30} /></div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>Sin avatar de cliente</div>
             <div style={{ fontSize: 12, marginTop: 4 }}>Define tu cliente ideal para que el agente IA cualifique mejor</div>
           </div>
@@ -357,15 +360,16 @@ function AvatarTab() {
           <div key={a.id} style={{ padding: '16px 20px', background: '#fff', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: 'var(--tide-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎯</div>
+                <div style={{ width: 36, height: 36, borderRadius: 'var(--r-sm)', background: 'var(--tide-soft)', color: 'var(--tide)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon d={I.target} size={18} /></div>
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>{a.titulo}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 1 }}>
                     <span className="crm-badge--nodot crm-badge" style={{ height: 16, fontSize: 9, padding: '0 6px', background: a.tipo === 'b2c' ? '#fdf2f8' : '#f5f3ff', color: a.tipo === 'b2c' ? '#ec4899' : '#8b5cf6', borderColor: 'transparent' }}>
                       {a.tipo === 'b2c' ? 'B2C' : 'B2B'}
                     </span>
-                    <span style={{ fontSize: 11, color: 'var(--slate-2)' }}>
-                      {a.generado_por === 'agente' ? '🤖 IA' : a.generado_por === 'mixto' ? '🤖 Mixto' : '✍️ Manual'}
+                    <span style={{ fontSize: 11, color: 'var(--slate-2)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <Icon d={(a.generado_por === 'agente' || a.generado_por === 'mixto') ? I.bot : I.edit} size={11} />
+                      {a.generado_por === 'agente' ? 'IA' : a.generado_por === 'mixto' ? 'Mixto' : 'Manual'}
                       {' · '}{new Date(a.updated_at).toLocaleDateString('es-ES')}
                     </span>
                   </div>
@@ -382,7 +386,7 @@ function AvatarTab() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {getFieldsForType(a.tipo).filter(f => (a as unknown as Record<string, string>)[f.key]).map(f => (
                 <div key={f.key} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '6px 0', borderBottom: '1px solid var(--paper)' }}>
-                  <div style={{ width: 24, height: 24, borderRadius: 4, background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0, marginTop: 1 }}>{f.icon}</div>
+                  <div style={{ width: 24, height: 24, borderRadius: 4, background: f.bg, color: f.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}><Icon d={ICONS[f.icon]} size={13} /></div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--slate-2)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{f.label}</div>
                     <div style={{ fontSize: 13, color: 'var(--ink)', lineHeight: 1.5, marginTop: 2 }}>{(a as unknown as Record<string, string>)[f.key] as string}</div>
@@ -402,8 +406,8 @@ function AvatarTab() {
           <div>
             <label style={labelStyle}>Tipo de cliente</label>
             <div style={{ display: 'flex', gap: 8 }}>
-              {([{ id: 'b2b' as const, label: 'B2B — Empresa', icon: '🏢', desc: 'Vendes a otras empresas' },
-                { id: 'b2c' as const, label: 'B2C — Particular', icon: '👤', desc: 'Vendes a personas' }]).map(opt => (
+              {([{ id: 'b2b' as const, label: 'B2B — Empresa', icon: 'building', desc: 'Vendes a otras empresas' },
+                { id: 'b2c' as const, label: 'B2C — Particular', icon: 'user', desc: 'Vendes a personas' }]).map(opt => (
                 <button key={opt.id} onClick={() => setFormTipo(opt.id)} style={{
                   flex: 1, padding: '12px 16px', borderRadius: 'var(--r-md)', cursor: 'pointer', textAlign: 'left',
                   border: formTipo === opt.id ? '2px solid var(--tide)' : '1px solid var(--border)',
@@ -411,7 +415,7 @@ function AvatarTab() {
                   transition: 'all 120ms',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 20 }}>{opt.icon}</span>
+                    <span style={{ display: 'flex' }}><Icon d={ICONS[opt.icon]} size={18} /></span>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: formTipo === opt.id ? 'var(--tide-ink)' : 'var(--ink)' }}>{opt.label}</div>
                       <div style={{ fontSize: 11, color: 'var(--slate-2)', marginTop: 1 }}>{opt.desc}</div>
@@ -428,7 +432,7 @@ function AvatarTab() {
           </div>
           {getFieldsForType(formTipo).map(f => (
             <div key={f.key}>
-              <label style={labelStyle}><span style={{ marginRight: 4 }}>{f.icon}</span> {f.label}</label>
+              <label style={{ ...labelStyle, display: 'inline-flex', alignItems: 'center', gap: 6 }}><Icon d={ICONS[f.icon]} size={13} /> {f.label}</label>
               {f.type === 'textarea' ? (
                 <textarea value={form[f.key] || ''} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder} style={{ ...fStyle, minHeight: 60, resize: 'vertical' }} />
               ) : (
@@ -452,9 +456,9 @@ function AvatarTab() {
 // MAIN PAGE
 // ============================================================
 const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'empresa', label: 'Empresa', icon: '🏢' },
-  { id: 'equipo', label: 'Equipo', icon: '👥' },
-  { id: 'avatar', label: 'Avatar Cliente', icon: '🎯' },
+  { id: 'empresa', label: 'Empresa', icon: 'building' },
+  { id: 'equipo', label: 'Equipo', icon: 'team' },
+  { id: 'avatar', label: 'Avatar Cliente', icon: 'target' },
 ]
 
 export default function EmpresaPage() {

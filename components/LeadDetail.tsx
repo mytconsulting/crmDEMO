@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Icon, I } from '@/components/crm-icons'
 import ScoreBadge from './ScoreBadge'
 import { COLUMNS as DEFAULT_COLUMNS, labelStyle, inputStyle, MOTIVOS_PERDIDA } from '@/lib/constants'
 import { usePipelineColumns } from '@/lib/hooks/usePipelineColumns'
@@ -120,6 +121,7 @@ export default function LeadDetail({ lead, onClose, onUpdate, onStatusChange }: 
         notas: editLead.notas,
         valor_negociacion: editLead.valor_negociacion || 0,
         asignado_a: assignedMemberId || null,
+        agente_modo: editLead.agente_modo || null,
       }
       if (motivo) {
         updateData.motivo_perdida = motivo
@@ -192,11 +194,7 @@ export default function LeadDetail({ lead, onClose, onUpdate, onStatusChange }: 
               <div className="crm-card__subtitle" style={{ marginBottom: 4 }}>LEAD · CONTACTO INDIVIDUAL</div>
               <div className="crm-detail__lead-name">{editLead.nombre || "Sin nombre"}</div>
             </div>
-            <button onClick={onClose} style={{
-              background: "var(--paper)", border: "none", borderRadius: 8,
-              width: 36, height: 36, cursor: "pointer", fontSize: 16, color: "var(--slate)",
-              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-            }}>✕</button>
+            <button onClick={onClose} className="crm-modal__close" aria-label="Cerrar"><Icon d={I.close} size={24} /></button>
           </div>
           <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap", width: '100%' }}>
             <span className={`crm-badge ${col.es_perdido ? 'crm-badge--err' : 'crm-badge--accent'}`}>
@@ -304,6 +302,20 @@ export default function LeadDetail({ lead, onClose, onUpdate, onStatusChange }: 
                 </select>
               </div>
               <div className="crm-detail__field">
+                <span className="crm-detail__field-key">AGENTE IA</span>
+                <select
+                  value={editLead.agente_modo || ''}
+                  onChange={(e) => setEditLead({ ...editLead, agente_modo: (e.target.value || null) as typeof editLead.agente_modo })}
+                  className="crm-field__input"
+                  style={{ textAlign: 'right', border: 'none', padding: '4px 0', background: 'transparent', fontSize: 13, cursor: 'pointer' }}
+                  title="Auto: ventas normalmente, soporte cuando el lead está en la columna Cliente. Ventas/Soporte fuerzan el agente para este lead."
+                >
+                  <option value="">Auto</option>
+                  <option value="ventas">Ventas</option>
+                  <option value="soporte">Soporte</option>
+                </select>
+              </div>
+              <div className="crm-detail__field">
                 <span className="crm-detail__field-key">VALOR</span>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <input
@@ -349,9 +361,10 @@ export default function LeadDetail({ lead, onClose, onUpdate, onStatusChange }: 
                 </div>
               )}
               {editLead.utm_source && <div className="crm-detail__field"><span className="crm-detail__field-key">UTM SOURCE</span><span className="crm-detail__field-val">{editLead.utm_source}</span></div>}
-              {editLead.utm_campaign && <div className="crm-detail__field"><span className="crm-detail__field-key">CAMPAÑA</span><span className="crm-detail__field-val">{editLead.utm_campaign}</span></div>}
               {editLead.utm_medium && <div className="crm-detail__field"><span className="crm-detail__field-key">MEDIO</span><span className="crm-detail__field-val">{editLead.utm_medium}</span></div>}
-              {editLead.utm_content && <div className="crm-detail__field"><span className="crm-detail__field-key">CONTENIDO</span><span className="crm-detail__field-val">{editLead.utm_content}</span></div>}
+              {editLead.utm_campaign && <div className="crm-detail__field"><span className="crm-detail__field-key">CAMPAÑA</span><span className="crm-detail__field-val">{editLead.utm_campaign}</span></div>}
+              {editLead.utm_term && <div className="crm-detail__field"><span className="crm-detail__field-key">CONJUNTO</span><span className="crm-detail__field-val" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }} title={editLead.utm_term}>{editLead.utm_term}</span></div>}
+              {editLead.utm_content && <div className="crm-detail__field"><span className="crm-detail__field-key">ANUNCIO</span><span className="crm-detail__field-val" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }} title={editLead.utm_content}>{editLead.utm_content}</span></div>}
               {editLead.referrer && <div className="crm-detail__field"><span className="crm-detail__field-key">REFERRER</span><span className="crm-detail__field-val" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }} title={editLead.referrer}>{editLead.referrer}</span></div>}
             </div>
             {/* Etiquetas */}
@@ -413,7 +426,7 @@ export default function LeadDetail({ lead, onClose, onUpdate, onStatusChange }: 
               className="crm-btn crm-btn--ghost"
               style={{ flex: 1, justifyContent: 'center' }}
             >
-              {editLead.chatbot_activo === false ? "Activar Setter IA" : "Pausar Setter IA"}
+              {editLead.chatbot_activo === false ? "Activar Agente IA" : "Pausar Agente IA"}
             </button>
             <button
               onClick={deleting || saving ? undefined : handleDeleteClick}

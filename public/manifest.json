@@ -1,15 +1,21 @@
 {
-    "name": "M&T CRM",
-    "short_name": "M&T CRM",
-    "description": "CRM de gestión de leads para M&T Consulting",
+    "name": "SmartFunnel",
+    "short_name": "SmartFunnel",
+    "description": "CRM + Setter IA para PYMEs · SmartFunnel",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0B1220",
-    "theme_color": "#0B1220",
+    "background_color": "#0B0F14",
+    "theme_color": "#0B0F14",
     "orientation": "any",
     "icons": [
         {
-            "src": "/icons/Logo.png",
+            "src": "/icons/smartfunnel-256.png",
+            "sizes": "256x256",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/smartfunnel-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"

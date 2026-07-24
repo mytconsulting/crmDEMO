@@ -11,6 +11,10 @@
 >   borra el localStorage y vuelve a sembrar los datos de ejemplo (`resetDemo()` en `lib/demo/store.ts`).
 > - Este repo/proyecto Vercel debe ser **independiente** del CRM oficial (`mytconsulting/myt-crm-app`).
 >   Gran parte de la guía de abajo (Supabase, n8n, IA, migraciones) **no aplica** a la demo.
+> - **Identidad SmartFunnel (rebrand 2026-07-24)**: la demo usa la marca **SmartFunnel** (el CRM
+>   oficial se renombró de "M&T CRM" a SmartFunnel). Fuentes Space Grotesk / JetBrains Mono, paleta
+>   `--tide #16D998` / `--ink #0B0F14`, logo = símbolo de barras + wordmark, favicon/PWA `smartfunnel-*`.
+> - **NUNCA emojis en la UI**: usar iconos monocromos de `components/crm-icons.tsx` (`Icon` + catálogo `I`).
 
 CRM + Setter IA multi-tenant para PYMEs. Cada tenant tiene datos aislados (RLS), agente IA multi-canal (WhatsApp, Instagram), sistema de citas, follow-ups inteligentes y módulos configurables. Full-stack Next.js en Vercel, backend en Supabase.
 

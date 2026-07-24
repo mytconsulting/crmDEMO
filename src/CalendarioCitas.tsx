@@ -3,6 +3,7 @@ import type { Cita, EstadoCita } from "@/types/cita";
 import type { Lead } from "@/types/lead";
 import type { DemoClient } from "@/lib/demo/client";
 import { useTeamMembers } from '@/lib/hooks/useTeamMembers';
+import { Icon, I } from "@/components/crm-icons";
 
 interface CalendarioCitasProps {
   supabase: DemoClient
@@ -482,7 +483,7 @@ export default function CalendarioCitas({ supabase, session, leads }: Calendario
     return (
       <div ref={kioskRef} className="kiosk-root">
         {/* Exit button */}
-        <button onClick={exitKiosk} className="kiosk-exit" title="Salir de pantalla completa">✕</button>
+        <button onClick={exitKiosk} className="kiosk-exit" title="Salir de pantalla completa"><Icon d={I.close} size={18} /></button>
 
         {/* Citas panel */}
         <div className="kiosk-citas-panel">
@@ -632,7 +633,7 @@ export default function CalendarioCitas({ supabase, session, leads }: Calendario
               <button key={v.id} onClick={() => setVista(v.id)} className={vista === v.id ? "is-active" : ""}>{v.label}</button>
             ))}
           </div>
-          <button onClick={enterKiosk} className="crm-btn crm-btn--ghost crm-btn--sm" title="Pantalla completa" style={{ fontSize: 15, padding: "4px 8px" }}>⛶</button>
+          <button onClick={enterKiosk} className="crm-btn crm-btn--ghost crm-btn--sm" title="Pantalla completa" style={{ padding: "4px 8px", display: "inline-flex", alignItems: "center" }}><Icon d={I.expand} size={15} /></button>
           <button onClick={() => { setEditingCita(null); setShowModal(true); }} className="crm-btn crm-btn--accent crm-btn--sm">+ Cita</button>
         </div>
       </div>
@@ -680,8 +681,12 @@ export default function CalendarioCitas({ supabase, session, leads }: Calendario
             <button onClick={nextWeek} style={{ ...navBtnStyle, opacity: canGoNext ? 1 : 0.3, cursor: canGoNext ? "pointer" : "default" }}>&#8250;</button>
           </div>
 
-          {/* Day headers */}
-          <div style={{ display: "grid", gridTemplateColumns: "50px repeat(7, 1fr)", borderBottom: "1px solid var(--border)" }}>
+          {/* Grid scrollable: la cabecera va DENTRO del contenedor con scroll (sticky) para
+              compartir el mismo ancho que las filas; asi las columnas quedan alineadas aunque
+              aparezca la barra de scroll vertical. */}
+          <div style={{ overflowY: "auto", maxHeight: "calc(100vh - 300px)" }}>
+          {/* Day headers (sticky) */}
+          <div style={{ position: "sticky", top: 0, zIndex: 2, background: "#fff", display: "grid", gridTemplateColumns: "50px repeat(7, 1fr)", borderBottom: "1px solid var(--border)" }}>
             <div />
             {weekData.map((day, i) => {
               const isToday = isSameDay(day, today);
@@ -703,8 +708,7 @@ export default function CalendarioCitas({ supabase, session, leads }: Calendario
             })}
           </div>
 
-          {/* Hour rows */}
-          <div style={{ overflowY: "auto", maxHeight: "calc(100vh - 300px)" }}>
+          {/* Hour rows (mismo contenedor scrollable que la cabecera) */}
             {Array.from({ length: 13 }, (_, h) => h + 8).map((hour) => {
               const horaStr = String(hour).padStart(2, "0") + ":00";
               return (
@@ -775,7 +779,7 @@ export default function CalendarioCitas({ supabase, session, leads }: Calendario
         <div style={{ background: "#fff", borderRadius: 16, border: "1px solid var(--border)" }}>
           {filteredCitas.length === 0 ? (
             <div style={{ padding: 60, textAlign: "center", color: "var(--slate-2)" }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>📅</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 12, color: "var(--slate-2)" }}><Icon d={I.cal} size={38} /></div>
               <div style={{ fontSize: 14, fontWeight: 600 }}>No hay citas</div>
               <div style={{ fontSize: 12, marginTop: 4 }}>Crea una cita manualmente o deja que el chatbot las agende</div>
             </div>

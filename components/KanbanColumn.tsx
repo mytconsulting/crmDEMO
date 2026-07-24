@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import LeadCard from './LeadCard'
+import { Icon, I } from '@/components/crm-icons'
 import type { Lead } from '@/lib/types'
 
 interface Column {
@@ -78,7 +79,7 @@ export default function KanbanColumn({ column, leads, onOpen, onDragStart, onDro
             <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
               {onMoveLeft && <button onClick={onMoveLeft} title="Mover izquierda" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, fontSize: 10, color: 'var(--slate-2)', lineHeight: 1 }}>◀</button>}
               {onMoveRight && <button onClick={onMoveRight} title="Mover derecha" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, fontSize: 10, color: 'var(--slate-2)', lineHeight: 1 }}>▶</button>}
-              {onDelete && <button onClick={onDelete} title="Eliminar columna" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, fontSize: 12, color: 'var(--mist)', lineHeight: 1, opacity: 0.5 }}>✕</button>}
+              {onDelete && <button onClick={onDelete} title="Eliminar columna" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, color: 'var(--mist)', lineHeight: 1, opacity: 0.5, display: 'inline-flex' }}><Icon d={I.close} size={12} /></button>}
             </div>
           )}
         </div>

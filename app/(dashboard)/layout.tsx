@@ -20,7 +20,7 @@ interface Profile {
 
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
   '/': { title: 'Panel general', subtitle: 'Operaciones' },
-  '/pipeline': { title: 'Pipeline de ventas', subtitle: 'M&T CRM · Gestión de leads' },
+  '/pipeline': { title: 'Pipeline de ventas', subtitle: 'SmartFunnel · Gestión de leads' },
   '/agent': { title: 'Setter IA', subtitle: 'Inteligencia · Configuración' },
   '/agent/train': { title: 'Entrenamiento del agente', subtitle: 'Inteligencia · Base de conocimiento' },
   '/calendar': { title: 'Calendario de citas', subtitle: 'Setter IA · Agenda automática' },
@@ -109,7 +109,7 @@ export default function DashboardLayout({
             borderRadius: 20, background: "rgba(239, 68, 68, 0.1)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 36
-          }}>🔒</div>
+          }}><Icon d={I.lock} size={36} /></div>
           <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--ink)", marginBottom: 12 }}>
             Cuenta Suspendida
           </h2>
@@ -130,7 +130,7 @@ export default function DashboardLayout({
   }
 
   const isAdmin = profile?.role === "admin"
-  const pageTitle = PAGE_TITLES[pathname] || { title: 'M&T CRM', subtitle: '' }
+  const pageTitle = PAGE_TITLES[pathname] || { title: 'SmartFunnel', subtitle: '' }
 
   return (
     <NotificationsProvider value={{ notifyStatusChange, notifyNewLead, markOwnAction }}>
@@ -145,7 +145,7 @@ export default function DashboardLayout({
       <div className="crm-main">
         <div className="crm-topbar">
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+            <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menú"><Icon d={I.menu} size={20} /></button>
             <div className="crm-topbar__title-group">
               <div className="crm-topbar__kicker">{pageTitle.subtitle}</div>
               <div className="crm-topbar__title">{pageTitle.title}</div>
@@ -197,7 +197,6 @@ export default function DashboardLayout({
                         </div>
                       ) : (
                         notificationHistory.map((n: { id: string; title: string; body: string; type: string; time: string }) => {
-                          const icon = n.type === "lead-new" ? "✨" : n.type === "cita-new" ? "📅" : "🔄"
                           const timeAgo = (() => {
                             const diff = Date.now() - new Date(n.time).getTime()
                             const mins = Math.floor(diff / 60000)

@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { COUNTRY_PREFIXES, normalizePhone } from '@/lib/phone'
 import { useTeamMembers } from '@/lib/hooks/useTeamMembers'
+import { Icon, I } from '@/components/crm-icons'
 
 interface NewLeadModalProps {
   userId: string
@@ -43,6 +44,7 @@ export default function NewLeadModal({ userId, onClose, onCreated }: NewLeadModa
 
   const handleSave = async () => {
     if (!nl.nombre.trim() || !nl.telefono.trim()) return alert("Nombre y teléfono son obligatorios")
+    if (!nl.empresa.trim()) return alert("La empresa es obligatoria (el agente IA la usa para personalizar). Si es un particular, pon su nombre o \"Particular\".")
     setSaving(true)
     try {
       const telefonoFull = normalizePhone(prefix + nl.telefono.replace(/\D/g, ''))
@@ -94,7 +96,7 @@ export default function NewLeadModal({ userId, onClose, onCreated }: NewLeadModa
                     background: showPrefixDropdown ? "var(--paper)" : "#fff",
                   }}
                 >
-                  <span style={{ fontSize: 16 }}>{selectedPrefix?.flag || '🌐'}</span>
+                  <span style={{ fontSize: 16, display: 'inline-flex' }}>{selectedPrefix?.flag || <Icon d={I.globe} size={15} />}</span>
                   <span style={{ fontWeight: 600 }}>+{prefix}</span>
                   <span style={{ marginLeft: "auto", fontSize: 10, color: "var(--slate-2)" }}>▼</span>
                 </button>
@@ -149,8 +151,8 @@ export default function NewLeadModal({ userId, onClose, onCreated }: NewLeadModa
             <input style={fStyle} placeholder="email@ejemplo.com" value={nl.email} onChange={e => setNl({...nl, email: e.target.value})} />
           </div>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--slate)", marginBottom: 4, display: "block" }}>Empresa</label>
-            <input style={fStyle} placeholder="Nombre de la empresa" value={nl.empresa} onChange={e => setNl({...nl, empresa: e.target.value})} />
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--slate)", marginBottom: 4, display: "block" }}>Empresa *</label>
+            <input style={fStyle} placeholder='Nombre de la empresa (o "Particular")' value={nl.empresa} onChange={e => setNl({...nl, empresa: e.target.value})} />
           </div>
           {teamMembers.length > 0 && (
             <div>
@@ -164,7 +166,7 @@ export default function NewLeadModal({ userId, onClose, onCreated }: NewLeadModa
             </div>
           )}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--slate)", marginBottom: 4, display: "block" }}>Contexto del lead</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--slate)", marginBottom: 4, display: "block" }}>Contexto del lead <span style={{ fontWeight: 400, color: "var(--slate-2)" }}>(visible para el agente IA)</span></label>
             <textarea style={{ ...fStyle, minHeight: 50, resize: "vertical" }} placeholder="Ej: empresa de jardineria en Bilbao, 5 empleados, buscan captar clientes online..." value={nl.contexto_lead} onChange={e => setNl({...nl, contexto_lead: e.target.value})} />
           </div>
           <div>

@@ -8,6 +8,7 @@ import {
 } from 'recharts'
 import { usePipelineColumns } from '@/lib/hooks/usePipelineColumns'
 import { Icon, I } from '@/components/crm-icons'
+import DateRangeCalendar from '@/components/DateRangeCalendar'
 
 const DEFAULT_COLUMNS = [
   { id: "nuevo", label: "Nuevo", color: "#14C8A4" },
@@ -37,40 +38,83 @@ interface Lead {
   updated_at?: string
 }
 
-type DateRange = 'semana' | 'mes' | 'trimestre' | 'ano' | 'todo' | 'custom'
+type DateRange = 'hoy' | '7d' | '30d' | '90d' | 'ano' | 'todo' | 'custom'
 
 const DATE_RANGE_OPTIONS: { value: DateRange; label: string }[] = [
-  { value: 'semana', label: 'Esta semana' },
-  { value: 'mes', label: 'Este mes' },
-  { value: 'trimestre', label: 'Trimestre' },
+  { value: 'hoy', label: 'Hoy' },
+  { value: '7d', label: 'Últimos 7 días' },
+  { value: '30d', label: 'Últimos 30 días' },
+  { value: '90d', label: 'Últimos 90 días' },
   { value: 'ano', label: 'Este año' },
   { value: 'todo', label: 'Todo' },
   { value: 'custom', label: 'Personalizado' },
 ]
 
-function getDateRangeStart(range: DateRange, customStart?: string): Date {
+const DAY_MS = 86400000
+const startOfDay = (d: Date) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x }
+const endOfDay = (d: Date) => { const x = new Date(d); x.setHours(23, 59, 59, 999); return x }
+const lastDayOfMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate()
+const isoLocal = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+const rollingDays = (range: DateRange) => (range === 'hoy' ? 1 : range === '7d' ? 7 : range === '30d' ? 30 : 90)
+
+/** Calcula [inicio, fin] del período activo. `offset` desplaza ventanas móviles y años (0 = actual, -1 = anterior). */
+function computeRange(range: DateRange, offset: number, customStart: string, customEnd: string): { start: Date; end: Date } {
   const now = new Date()
   switch (range) {
-    case 'semana': {
-      const d = new Date(now)
-      d.setDate(d.getDate() - d.getDay() + 1)
-      d.setHours(0, 0, 0, 0)
-      return d
+    case 'hoy':
+    case '7d':
+    case '30d':
+    case '90d': {
+      const n = rollingDays(range)
+      const anchor = startOfDay(now)
+      anchor.setDate(anchor.getDate() + offset * n) // último día del bloque
+      const s = new Date(anchor)
+      s.setDate(s.getDate() - (n - 1))
+      return { start: startOfDay(s), end: offset === 0 ? now : endOfDay(anchor) }
     }
-    case 'mes': return new Date(now.getFullYear(), now.getMonth(), 1)
-    case 'trimestre': {
-      const q = Math.floor(now.getMonth() / 3) * 3
-      return new Date(now.getFullYear(), q, 1)
+    case 'ano': {
+      const year = now.getFullYear() + offset
+      return { start: new Date(year, 0, 1, 0, 0, 0, 0), end: offset === 0 ? now : new Date(year, 11, 31, 23, 59, 59, 999) }
     }
-    case 'ano': return new Date(now.getFullYear(), 0, 1)
-    case 'todo': return new Date(2020, 0, 1)
-    case 'custom': return customStart ? new Date(customStart) : new Date(now.getFullYear(), now.getMonth(), 1)
+    case 'todo':
+      return { start: new Date(2020, 0, 1), end: now }
+    case 'custom': {
+      if (!customStart) return { start: new Date(2020, 0, 1), end: now }
+      const start = startOfDay(new Date(customStart + 'T00:00:00'))
+      const end = customEnd ? endOfDay(new Date(customEnd + 'T00:00:00')) : now
+      return { start, end }
+    }
   }
 }
 
-function getDateRangeEnd(range: DateRange, customEnd?: string): Date {
-  if (range === 'custom' && customEnd) return new Date(customEnd + 'T23:59:59')
-  return new Date()
+/** Etiqueta legible del período activo (barra de flechas). */
+function formatRangeLabel(range: DateRange, start: Date, end: Date): string {
+  if (range === 'todo') return 'Histórico completo'
+  if (range === 'ano') return String(start.getFullYear())
+  // Rango de un solo día natural -> "Hoy" / "Ayer" / fecha suelta
+  if (start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    const today = startOfDay(new Date())
+    const diff = Math.round((today.getTime() - startOfDay(start).getTime()) / DAY_MS)
+    if (diff === 0) return 'Hoy'
+    if (diff === 1) return 'Ayer'
+    const opts: Intl.DateTimeFormatOptions = start.getFullYear() === today.getFullYear()
+      ? { day: 'numeric', month: 'short' }
+      : { day: 'numeric', month: 'short', year: 'numeric' }
+    return start.toLocaleDateString('es-ES', opts)
+  }
+  // custom que es un mes natural completo -> "Mayo 2026"
+  if (
+    range === 'custom' &&
+    start.getDate() === 1 && start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear() &&
+    end.getDate() === lastDayOfMonth(end.getFullYear(), end.getMonth())
+  ) {
+    const s = start.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
+  const sameYear = start.getFullYear() === end.getFullYear()
+  const short: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
+  const long: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
+  return `${start.toLocaleDateString('es-ES', short)} – ${end.toLocaleDateString('es-ES', sameYear ? short : long)}`
 }
 
 function StatCard({ label, value, icon, color, trend, suffix = "", isMoney = false }: {
@@ -90,11 +134,11 @@ function StatCard({ label, value, icon, color, trend, suffix = "", isMoney = fal
         </div>
       )}
       <div style={{
-        position: "absolute", top: 16, right: 16, fontSize: 20,
-        background: `${color}10`, width: 36, height: 36, borderRadius: "var(--r-sm)",
+        position: "absolute", top: 16, right: 16, color,
+        background: `color-mix(in srgb, ${color} 6%, transparent)`, width: 36, height: 36, borderRadius: "var(--r-sm)",
         display: "flex", alignItems: "center", justifyContent: "center"
       }}>
-        {icon}
+        <Icon d={(I as Record<string, React.ReactNode>)[icon] ?? I.chart} size={19} />
       </div>
     </div>
   )
@@ -107,12 +151,51 @@ export default function DashboardPage() {
   const { columns: dynamicColumns } = usePipelineColumns()
   const COLUMNS = dynamicColumns.length > 0 ? dynamicColumns : DEFAULT_COLUMNS.map(c => ({ ...c, es_ganado: c.id === 'cliente', es_perdido: false }))
 
-  const [dateRange, setDateRange] = useState<DateRange>('mes')
+  const [dateRange, setDateRange] = useState<DateRange>('30d')
+  const [offset, setOffset] = useState(0)
   const [customStart, setCustomStart] = useState('')
   const [customEnd, setCustomEnd] = useState('')
+  const [showCalendar, setShowCalendar] = useState(false)
 
-  const rangeStart = useMemo(() => getDateRangeStart(dateRange, customStart), [dateRange, customStart])
-  const rangeEnd = useMemo(() => getDateRangeEnd(dateRange, customEnd), [dateRange, customEnd])
+  const { start: rangeStart, end: rangeEnd } = useMemo(
+    () => computeRange(dateRange, offset, customStart, customEnd),
+    [dateRange, offset, customStart, customEnd]
+  )
+  const rangeLabel = useMemo(() => formatRangeLabel(dateRange, rangeStart, rangeEnd), [dateRange, rangeStart, rangeEnd])
+
+  const selectRange = useCallback((r: DateRange) => {
+    setDateRange(r)
+    setOffset(0)
+    setShowCalendar(r === 'custom')
+  }, [])
+
+  // Desplaza el período activo por su propia longitud. dir = -1 anterior, +1 siguiente.
+  const shiftPeriod = useCallback((dir: -1 | 1) => {
+    if (dateRange === 'custom') {
+      if (!customStart || !customEnd) return
+      const s = new Date(customStart + 'T00:00:00')
+      const e = new Date(customEnd + 'T00:00:00')
+      // Si el rango es un mes natural completo, saltar por meses (mismo período, mes anterior/siguiente).
+      const wholeMonth = s.getDate() === 1 && e.getDate() === lastDayOfMonth(e.getFullYear(), e.getMonth())
+      if (wholeMonth) {
+        const months = (e.getFullYear() * 12 + e.getMonth()) - (s.getFullYear() * 12 + s.getMonth()) + 1
+        const ns = new Date(s.getFullYear(), s.getMonth() + dir * months, 1)
+        const neFirst = new Date(e.getFullYear(), e.getMonth() + dir * months, 1)
+        const ne = new Date(neFirst.getFullYear(), neFirst.getMonth(), lastDayOfMonth(neFirst.getFullYear(), neFirst.getMonth()))
+        setCustomStart(isoLocal(ns)); setCustomEnd(isoLocal(ne))
+      } else {
+        const spanDays = Math.round((startOfDay(e).getTime() - startOfDay(s).getTime()) / DAY_MS) + 1
+        const ns = new Date(s); ns.setDate(ns.getDate() + dir * spanDays)
+        const ne = new Date(e); ne.setDate(ne.getDate() + dir * spanDays)
+        setCustomStart(isoLocal(ns)); setCustomEnd(isoLocal(ne))
+      }
+    } else {
+      setOffset(o => Math.min(0, o + dir))
+    }
+  }, [dateRange, customStart, customEnd])
+
+  const showNav = dateRange !== 'todo' && !(dateRange === 'custom' && (!customStart || !customEnd))
+  const canForward = rangeEnd < startOfDay(new Date())
 
   const fetchLeads = useCallback(async () => {
     setLoading(true)
@@ -216,26 +299,64 @@ export default function DashboardPage() {
     <div style={{ maxWidth: "1500px", margin: "0 auto", paddingBottom: 40 }}>
       {/* Date Range Filter */}
       <div style={{
-        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, flexWrap: 'wrap',
+        display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, flexWrap: 'wrap',
       }}>
         <span className="crm-card__title" style={{ marginRight: 4 }}>Periodo:</span>
         <div className="crm-segmented">
           {DATE_RANGE_OPTIONS.map(opt => (
             <button
               key={opt.value}
-              onClick={() => setDateRange(opt.value)}
+              onClick={() => selectRange(opt.value)}
               className={dateRange === opt.value ? 'is-active' : ''}
             >{opt.label}</button>
           ))}
         </div>
-        {dateRange === 'custom' && (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginLeft: 8 }}>
-            <span className="mt-meta">Desde:</span>
-            <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} className="crm-field__input" style={{ width: 'auto' }} />
-            <span className="mt-meta">Hasta:</span>
-            <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} className="crm-field__input" style={{ width: 'auto' }} />
-          </div>
-        )}
+
+        {/* Navegación entre períodos + calendario del personalizado */}
+        <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+          {showNav && (
+            <div className="period-nav">
+              <button className="period-nav__btn" onClick={() => shiftPeriod(-1)} aria-label="Período anterior">
+                <Icon d={I.chevronLeft} size={16} />
+              </button>
+              {dateRange === 'custom' ? (
+                <button className="period-nav__label" onClick={() => setShowCalendar(s => !s)}>
+                  <Icon d={I.cal} size={14} />{rangeLabel}
+                </button>
+              ) : (
+                <span className="period-nav__label">{rangeLabel}</span>
+              )}
+              <button className="period-nav__btn" onClick={() => shiftPeriod(1)} disabled={!canForward} aria-label="Período siguiente">
+                <Icon d={I.chevronRight} size={16} />
+              </button>
+            </div>
+          )}
+
+          {dateRange === 'custom' && (!customStart || !customEnd) && (
+            <button
+              className="period-nav__label"
+              style={{ border: '1px solid var(--border)', background: 'var(--white)' }}
+              onClick={() => setShowCalendar(s => !s)}
+            >
+              <Icon d={I.cal} size={14} />Elegir fechas
+            </button>
+          )}
+
+          {dateRange === 'custom' && showCalendar && (
+            <>
+              <div onClick={() => setShowCalendar(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
+              <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, zIndex: 50 }}>
+                <DateRangeCalendar
+                  start={customStart}
+                  end={customEnd}
+                  onChange={(s, e) => { setCustomStart(s); setCustomEnd(e) }}
+                  onClose={() => setShowCalendar(false)}
+                />
+              </div>
+            </>
+          )}
+        </div>
+
         <span className="mt-meta" style={{ marginLeft: 'auto' }}>
           {leads.length} de {allLeads.length} leads
         </span>
@@ -243,10 +364,10 @@ export default function DashboardPage() {
 
       {/* Stat Cards — 4 principales */}
       <div className="crm-grid-stats">
-        <StatCard label="Leads cualificados" value={dashboardData.total} icon="👥" color="var(--tide)" trend={dashboardData.trend} />
-        <StatCard label="Pipeline abierto" value={dashboardData.pipelineValue} icon="💰" color="var(--warn)" suffix=" €" isMoney />
-        <StatCard label="Revenue cerrado" value={dashboardData.wonRevenue} icon="🏆" color="var(--ok)" suffix=" €" isMoney />
-        <StatCard label="Win rate" value={dashboardData.winRate} icon="🎯" color="var(--tide)" suffix="%" />
+        <StatCard label="Leads cualificados" value={dashboardData.total} icon="team" color="var(--tide)" trend={dashboardData.trend} />
+        <StatCard label="Pipeline abierto" value={dashboardData.pipelineValue} icon="money" color="var(--warn)" suffix=" €" isMoney />
+        <StatCard label="Revenue cerrado" value={dashboardData.wonRevenue} icon="trophy" color="var(--ok)" suffix=" €" isMoney />
+        <StatCard label="Win rate" value={dashboardData.winRate} icon="target" color="var(--tide)" suffix="%" />
       </div>
 
       {/* Charts Grid — area chart + funnel pipeline */}

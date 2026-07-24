@@ -58,10 +58,16 @@ export default function Sidebar({ sidebarOpen, onClose }: SidebarProps) {
       <nav className={`crm-sidebar${sidebarOpen ? " open" : ""}`}>
         {/* Brand */}
         <div className="crm-sidebar__brand">
-          <img src="/icons/Logo.png" alt="M&T" className="crm-sidebar__brand-mark" style={{ padding: 0, border: 'none' }} />
+          <div className="crm-sidebar__symbol" aria-hidden="true">
+            <div className="crm-sidebar__symbol-bars">
+              <span /><span /><span />
+            </div>
+          </div>
           <div className="crm-sidebar__brand-name">
-            M&T CRM
-            <small>CONSULTING</small>
+            <span className="crm-sidebar__wordmark">
+              <span className="sf-smart">Smart</span><span className="sf-funnel">Funnel</span>
+            </span>
+            <small>CRM · M&T</small>
           </div>
         </div>
 

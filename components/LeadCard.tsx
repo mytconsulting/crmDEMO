@@ -1,4 +1,5 @@
 import ScoreBadge from './ScoreBadge'
+import { Icon, I } from '@/components/crm-icons'
 import type { Lead } from '@/lib/types'
 
 interface LeadCardProps {
@@ -38,13 +39,13 @@ export default function LeadCard({ lead, onOpen, onDragStart }: LeadCardProps) {
 
       <div className="crm-lead-card__contact">
         {lead.telefono && (
-          <div className="crm-lead-card__contact-line">
-            <span style={{ fontSize: 12 }}>📞</span> {lead.telefono}
+          <div className="crm-lead-card__contact-line" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Icon d={I.phone} size={12} /> {lead.telefono}
           </div>
         )}
         {lead.email && (
-          <div className="crm-lead-card__contact-line">
-            <span style={{ fontSize: 12 }}>✉️</span> {lead.email}
+          <div className="crm-lead-card__contact-line" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Icon d={I.mail} size={12} /> {lead.email}
           </div>
         )}
       </div>
@@ -62,7 +63,7 @@ export default function LeadCard({ lead, onOpen, onDragStart }: LeadCardProps) {
       <div className="crm-lead-card__footer">
         <div className="crm-lead-card__date">
           {lead.created_at && (
-            <>📥 {new Date(lead.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}</>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Icon d={I.inbox} size={12} /> {new Date(lead.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}</span>
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 'auto' }}>
