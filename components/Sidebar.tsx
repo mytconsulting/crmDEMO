@@ -19,6 +19,7 @@ const NAV_SECTIONS = [
       { id: "dashboard", href: "/", icon: I.dashboard, label: "Dashboard" },
       { id: "pipeline", href: "/pipeline", icon: I.pipeline, label: "Pipeline" },
       { id: "chat", href: "/chat", icon: I.chat, label: "Chat" },
+      { id: "soporte", href: "/soporte", icon: I.help, label: "Soporte" },
       { id: "calendario", href: "/calendar", icon: I.cal, label: "Calendario" },
     ],
   },
@@ -26,7 +27,6 @@ const NAV_SECTIONS = [
     label: 'INTELIGENCIA',
     items: [
       { id: "agent", href: "/agent", icon: I.bot, label: "Agentes" },
-      { id: "soporte", href: "/soporte", icon: I.help, label: "Soporte" },
       { id: "recursos", href: "/recursos", icon: I.file, label: "Recursos" },
     ],
   },
