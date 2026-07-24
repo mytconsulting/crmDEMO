@@ -220,6 +220,8 @@ export function resetDemo(): void {
   if (typeof window === 'undefined') return
   try {
     window.localStorage.removeItem(DEMO_STORAGE_KEY)
+    // Volver a mostrar el popup de bienvenida tras reiniciar.
+    window.localStorage.removeItem('sf_welcome_seen')
     // Limpiar también el historial de notificaciones por tenant
     Object.keys(window.localStorage)
       .filter(k => k.startsWith('notif_history_'))

@@ -9,6 +9,7 @@ import { ToastContainer } from '@/src/Toast'
 import { NotificationsProvider } from '@/lib/notifications-context'
 import { Icon, I } from '@/components/crm-icons'
 import DemoResetButton from '@/components/DemoResetButton'
+import WelcomeModal from '@/components/WelcomeModal'
 
 interface Profile {
   id: string
@@ -237,6 +238,7 @@ export default function DashboardLayout({
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       <DemoResetButton />
+      <WelcomeModal />
     </div>
     </NotificationsProvider>
   )

@@ -114,6 +114,17 @@ funcionales (mock); Setter IA solo como zona informativa; landing y config de ag
   Regla clave reflejada: el agente SOLO se pausa si lo paras a mano o escribes al cliente por WhatsApp;
   crear un ticket NO lo pausa (guarda la duda y sigue atendiendo).
 
+### Popup de bienvenida + captación de leads (`components/WelcomeModal.tsx`)
+- Modal de bienvenida que aparece en la 1ª visita y tras reiniciar (resetDemo borra `sf_welcome_seen`).
+  Explica quiénes somos (M&T) + qué es SmartFunnel, con formulario OPCIONAL (nombre, apellido, teléfono,
+  email) y contacto directo (contacto@mytconsulting.es · +34 672 50 18 48). Montado en `(dashboard)/layout.tsx`.
+- **Entrega de datos**: los envíos entran como LEAD REAL en SmartFunnel vía su webhook público
+  `POST https://www.smartfunnel.es/api/webhooks/lead` (multi-tenant, `tenant_id` en el body, sin firma),
+  con `origen: 'demo'`. Se guarda además copia local (`sf_welcome_submissions`).
+- **PENDIENTE**: falta pegar `SMARTFUNNEL_TENANT_ID` (UUID de la cuenta M&T) en WelcomeModal.tsx; mientras
+  esté vacío solo guarda copia local. También verificar CORS (`ALLOWED_WEBHOOK_ORIGINS` en prod debe incluir
+  `https://myt-crn-demo.vercel.app` si está fijada). No tocar el SmartFunnel real (socio trabajando en él).
+
 ### Pendiente (no hecho)
 - Workflows real (builder React Flow con `@xyflow/react`) — solo se hizo la zona informativa.
 - Métricas Agente, Homepage marketing: no portados. Integraciones/Admin/Auth/Entrenar: no viables sin backend.
