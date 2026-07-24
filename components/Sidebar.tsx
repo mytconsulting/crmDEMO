@@ -29,12 +29,6 @@ const NAV_SECTIONS = [
     ],
   },
   {
-    label: 'ANÁLISIS',
-    items: [
-      { id: "rendimiento", href: "/rendimiento", icon: I.chart, label: "Rendimiento" },
-    ],
-  },
-  {
     label: 'CONFIGURACIÓN',
     items: [
       { id: "empresa", href: "/empresa", icon: I.team, label: "Empresa" },

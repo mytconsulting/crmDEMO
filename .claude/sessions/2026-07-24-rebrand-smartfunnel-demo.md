@@ -94,6 +94,11 @@ funcionales (mock); Setter IA solo como zona informativa; landing y config de ag
 ### Verificación parte 2
 - `npm run build` ✅ 10 rutas (incl. `/agent`, `/chat`, `/rendimiento`, `/rendimiento/[tenant]`).
 
+### Corrección posterior — Rendimiento eliminado
+- Se construyó Rendimiento pero luego se **eliminó** (ruta `app/(dashboard)/rendimiento/**`, entrada de
+  sidebar "ANÁLISIS" y PAGE_TITLES): es una vista de **agencia/administrador** multi-cliente, y la demo
+  solo debe mostrar lo que ve un **cliente (tenant)**. Regla anotada en CLAUDE.md y memoria.
+
 ### Pendiente (no hecho)
 - Workflows (builder React Flow, necesita dep `@xyflow/react`), Métricas Agente, Homepage marketing:
   no portados. Integraciones/Admin/Auth/Entrenar: no viables sin backend.
